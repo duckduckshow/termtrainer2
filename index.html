@@ -3,33 +3,19 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Termtrainer – Vereinfachen</title>
+<title>Termtrainer 2 – Vereinfachen</title>
 <style>
   body {
     font-family: system-ui, Arial, sans-serif;
-    background: linear-gradient(to bottom right, #f0f4ff, #e0f7fa);
+    background: linear-gradient(to bottom right,#f0f4ff,#e0f7fa);
     text-align: center;
+    margin: 0;
     padding: 20px;
   }
-  h1, h2 {
-    color:#333;
-    margin:10px 0;
-    font-size:1.6em;
-  }
-  #task1, #task2 {
-    font-size:1.8em;
-    margin:15px;
-  }
-  .result {
-    font-size:1.3em;
-    margin:10px;
-    font-weight:bold;
-  }
-  .score {
-    font-size:1em;
-    margin:8px;
-    color:#333;
-  }
+  h1,h2 { color:#333; margin:10px 0; font-size:1.6em; }
+  #task1,#task2 { font-size:1.8em; margin:15px; }
+  .result { font-size:1.3em; margin:10px; font-weight:bold; }
+  .score { font-size:1em; margin:8px; color:#333; }
   input {
     padding:10px;
     font-size:1.2em;
@@ -38,9 +24,7 @@
     text-align:center;
     border-radius:8px;
     border:1px solid #aaa;
-    -webkit-user-modify: read-write-plaintext-only;
-    autocorrect="off";
-    spellcheck="false";
+    spellcheck:false;
   }
   button {
     background:#007bff;
@@ -60,9 +44,8 @@
 
 <h1>Teil A – Eine Variable</h1>
 <div class="score" id="score1">Aufgabe 1 von 10 – Punkte: 0</div>
-<div id="task1">lade ...</div>
-
-<input type="text" id="answer1" placeholder="Vereinfachter Term" autocomplete="off" autocorrect="off" spellcheck="false">
+<div id="task1">Lade Aufgabe...</div>
+<input type="text" id="answer1" placeholder="Vereinfachter Term" autocomplete="off">
 <br>
 <button id="checkBtn1">Prüfen</button>
 <button id="newBtn1">Neue Aufgabe</button>
@@ -72,9 +55,8 @@
 
 <h2>Teil B – Zwei Variablen</h2>
 <div class="score" id="score2">Aufgabe 1 von 10 – Punkte: 0</div>
-<div id="task2">lade ...</div>
-
-<input type="text" id="answer2" placeholder="Vereinfachter Term" autocomplete="off" autocorrect="off" spellcheck="false">
+<div id="task2">Lade Aufgabe...</div>
+<input type="text" id="answer2" placeholder="Vereinfachter Term" autocomplete="off">
 <br>
 <button id="checkBtn2">Prüfen</button>
 <button id="newBtn2">Neue Aufgabe</button>
@@ -83,30 +65,29 @@
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
-  const superExp = {2:"²", 3:"³"};
-  const randomInt = (min,max)=>Math.floor(Math.random()*(max-min+1))+min;
-  const sign = ()=>Math.random()<0.5?"+":"-";
-  const coeff = ()=>randomInt(1,6);
-  const simplify = s => s.replace(/\s+/g,"").replace(/--/g,"+").replace(/\+-/g,"-").replace(/\b1(?=[a-zA-Z])/g,"").toLowerCase();
+  const randomInt=(min,max)=>Math.floor(Math.random()*(max-min+1))+min;
+  const sign=()=>Math.random()<0.5?"+":"-";
+  const coeff=()=>randomInt(1,6);
+  const simplify=s=>s.replace(/\s+/g,"").replace(/--/g,"+").replace(/\+-/g,"-").replace(/\b1(?=[a-zA-Z])/g,"").toLowerCase();
 
-  // -------- TEIL A --------
+  // ---------- Teil A ----------
   const task1=document.getElementById("task1"), result1=document.getElementById("result1");
   const score1=document.getElementById("score1"), answer1=document.getElementById("answer1");
   const checkBtn1=document.getElementById("checkBtn1"), newBtn1=document.getElementById("newBtn1");
   let sol1="", points1=0, round1=1, total1=10;
 
   function createTask1(){
-    const type=Math.random();
-    let aufgabe="", solution="";
     const VAR="a";
+    const t=Math.random();
+    let aufgabe="", solution="";
 
-    if(type<0.25){
+    if(t<0.25){
       const c=coeff(), n=coeff(), s=sign();
       aufgabe=`${c}(${VAR} ${s} ${n})`;
       const sn=s==="+"?1:-1;
       solution=`${c}${VAR} ${sn>0?"+":"-"} ${c*n}`;
     }
-    else if(type<0.5){
+    else if(t<0.5){
       const c1=coeff(), c2=coeff(), n=coeff(), s1=sign(), s2=sign();
       aufgabe=`${c1}${VAR} ${s1} ${c2}(${VAR} ${s2} ${n})`;
       const sc1=s1==="+"?1:-1, sc2=s2==="+"?1:-1;
@@ -114,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const num=sc1*sc2*c2*n;
       solution=`${totalA}${VAR} ${num>=0?"+":"-"} ${Math.abs(num)}`;
     }
-    else if(type<0.75){
+    else if(t<0.75){
       const a=coeff(), b=coeff(), s=sign();
       aufgabe=`(${a}${VAR} ${s} ${b})²`;
       const sb=s==="+"?1:-1;
@@ -133,6 +114,22 @@ document.addEventListener("DOMContentLoaded", () => {
     return aufgabe;
   }
 
+  function new1(){
+    if(round1>total1){
+      task1.textContent="🎉 Runde beendet!";
+      result1.style.color="green";
+      result1.textContent=`Endstand: ${points1}/${total1} Punkte.`;
+      round1=1;points1=0;
+      newBtn1.textContent="Neue Runde";
+      return;
+    }
+    const aufg=createTask1();
+    task1.textContent=aufg+" = ?";
+    answer1.value="";
+    result1.textContent="";
+    score1.textContent=`Aufgabe ${round1} von ${total1} – Punkte: ${points1}`;
+  }
+
   function check1(){
     const input=simplify(answer1.value);
     if(!input){result1.style.color="gray";result1.textContent="Bitte gib eine Lösung ein.";return;}
@@ -142,27 +139,78 @@ document.addEventListener("DOMContentLoaded", () => {
     score1.textContent=`Aufgabe ${Math.min(round1,total1)} von ${total1} – Punkte: ${points1}`;
   }
 
-  function new1(){
-    if(round1>total1){result1.style.color="green";task1.textContent="🎉 Runde beendet!";result1.textContent=`Endstand: ${points1}/${total1}`;round1=1;points1=0;newBtn1.textContent="Neue Runde";return;}
-    const aufg=createTask1();
-    task1.textContent=aufg+" = ?";
-    answer1.value="";result1.textContent="";
-    score1.textContent=`Aufgabe ${round1} von ${total1} – Punkte: ${points1}`;
-  }
-
   checkBtn1.addEventListener("click",check1);
   newBtn1.addEventListener("click",new1);
   answer1.addEventListener("keydown",e=>{if(e.key==="Enter")check1();});
-  new1();
 
-  // -------- TEIL B --------
+  // ---------- Teil B ----------
   const task2=document.getElementById("task2"), result2=document.getElementById("result2");
   const score2=document.getElementById("score2"), answer2=document.getElementById("answer2");
   const checkBtn2=document.getElementById("checkBtn2"), newBtn2=document.getElementById("newBtn2");
   let sol2="", points2=0, round2=1, total2=10;
 
-  const VARS=["a","b"];
-
   function createTask2(){
     const v1="a", v2="b";
-    const type=Math.random
+    const t=Math.random();
+    let aufgabe="", solution="";
+
+    if(t<0.4){
+      const c1=coeff(), c2=coeff(), n1=coeff(), n2=coeff(), s1=sign(), s2=sign();
+      aufgabe=`${c1}(${v1} ${s1} ${n1}) + ${c2}(${v2} ${s2} ${n2})`;
+      const sc1=s1==="+"?1:-1, sc2=s2==="+"?1:-1;
+      const sol=`${c1}${v1} + ${c2}${v2} ${sc1*n1+sc2*n2>=0?"+":"-"} ${Math.abs(sc1*n1+sc2*n2)}`;
+      solution=sol;
+    }
+    else if(t<0.8){
+      const c1=coeff(), c2=coeff(), n1=coeff(), n2=coeff(), s1=sign(), s2=sign();
+      aufgabe=`(${c1}${v1} ${s1} ${n1})(${c2}${v2} ${s2} ${n2})`;
+      const sc1=s1==="+"?1:-1, sc2=s2==="+"?1:-1;
+      const a1=c1*c2, a2=c1*sc2*n2, a3=sc1*c2*n1, a4=sc1*sc2*n1*n2;
+      solution=`${a1}${v1}${v2} ${a2>=0?"+":"-"} ${Math.abs(a2)}${v1} ${a3>=0?"+":"-"} ${Math.abs(a3)}${v2} ${a4>=0?"+":"-"} ${Math.abs(a4)}`;
+    }
+    else{
+      const a1=coeff(), a2=coeff(), n1=coeff(), n2=coeff(), s1=sign(), s2=sign();
+      aufgabe=`${a1}${v1} ${s1} ${n1} + ${a2}${v2} ${s2} ${n2}`;
+      const sc1=s1==="+"?1:-1, sc2=s2==="+"?1:-1;
+      solution=`${a1}${v1} + ${a2}${v2} ${sc1*n1+sc2*n2>=0?"+":"-"} ${Math.abs(sc1*n1+sc2*n2)}`;
+    }
+    sol2=simplify(solution);
+    return aufgabe;
+  }
+
+  function new2(){
+    if(round2>total2){
+      task2.textContent="🎉 Runde beendet!";
+      result2.style.color="green";
+      result2.textContent=`Endstand: ${points2}/${total2} Punkte.`;
+      round2=1;points2=0;
+      newBtn2.textContent="Neue Runde";
+      return;
+    }
+    const aufg=createTask2();
+    task2.textContent=aufg+" = ?";
+    answer2.value="";
+    result2.textContent="";
+    score2.textContent=`Aufgabe ${round2} von ${total2} – Punkte: ${points2}`;
+  }
+
+  function check2(){
+    const input=simplify(answer2.value);
+    if(!input){result2.style.color="gray";result2.textContent="Bitte gib eine Lösung ein.";return;}
+    if(input===sol2){result2.style.color="green";result2.textContent="✅ Richtig!";points2++;}
+    else{result2.style.color="red";result2.textContent=`❌ Falsch! Richtig: ${sol2}`;}
+    round2++;
+    score2.textContent=`Aufgabe ${Math.min(round2,total2)} von ${total2} – Punkte: ${points2}`;
+  }
+
+  checkBtn2.addEventListener("click",check2);
+  newBtn2.addEventListener("click",new2);
+  answer2.addEventListener("keydown",e=>{if(e.key==="Enter")check2();});
+
+  // sofort laden
+  new1();
+  new2();
+});
+</script>
+</body>
+</html>
