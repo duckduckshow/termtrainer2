@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const randomInt=(min,max)=>Math.floor(Math.random()*(max-min+1))+min;
   const sign=()=>Math.random()<0.5?"+":"-";
-  const coeff=()=>randomInt(1,6);
+  const coeff=()=>randomInt(2,6);
   const simplify=s=>s.replace(/\s+/g,"").replace(/--/g,"+").replace(/\+-/g,"-").replace(/\b1(?=[a-zA-Z])/g,"").toLowerCase();
 
   // ---------- Teil A ----------
@@ -227,5 +227,6 @@ function createTask2(){
 </script>
 </body>
 </html>
+
 
 
