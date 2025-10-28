@@ -76,43 +76,51 @@ document.addEventListener("DOMContentLoaded", () => {
   const checkBtn1=document.getElementById("checkBtn1"), newBtn1=document.getElementById("newBtn1");
   let sol1="", points1=0, round1=1, total1=10;
 
-  function createTask1(){
-    const VAR="a";
-    const t=Math.random();
-    let aufgabe="", solution="";
+function createTask1(){
+  const VAR = "a";
+  const t = Math.random();
+  let aufgabe = "", solution = "";
 
-    if(t<0.25){
-      const c=coeff(), n=coeff(), s=sign();
-      aufgabe=`${c}(${VAR} ${s} ${n})`;
-      const sn=s==="+"?1:-1;
-      solution=`${c}${VAR} ${sn>0?"+":"-"} ${c*n}`;
-    }
-    else if(t<0.5){
-      const c1=coeff(), c2=coeff(), n=coeff(), s1=sign(), s2=sign();
-      aufgabe=`${c1}${VAR} ${s1} ${c2}(${VAR} ${s2} ${n})`;
-      const sc1=s1==="+"?1:-1, sc2=s2==="+"?1:-1;
-      const totalA=c1 + sc1*sc2*c2;
-      const num=sc1*sc2*c2*n;
-      solution=`${totalA}${VAR} ${num>=0?"+":"-"} ${Math.abs(num)}`;
-    }
-    else if(t<0.75){
-      const a=coeff(), b=coeff(), s=sign();
-      aufgabe=`(${a}${VAR} ${s} ${b})²`;
-      const sb=s==="+"?1:-1;
-      const a2=a*a, ab2=2*a*b*sb, b2=b*b;
-      solution=`${a2}${VAR}² ${ab2>=0?"+":"-"} ${Math.abs(ab2)}${VAR} ${sb>0?"+":"-"} ${b2}`;
-    }
-    else{
-      const c1=coeff(), c2=coeff(), n1=coeff(), n2=coeff(), s1=sign(), s2=sign();
-      aufgabe=`(${c1}${VAR} ${s1} ${n1}) + (${c2}${VAR} ${s2} ${n2})`;
-      const sc1=s1==="+"?1:-1, sc2=s2==="+"?1:-1;
-      const totalA=c1 + c2;
-      const totalN=sc1*n1 + sc2*n2;
-      solution=`${totalA}${VAR} ${totalN>=0?"+":"-"} ${Math.abs(totalN)}`;
-    }
-    sol1=simplify(solution);
-    return aufgabe;
+  if (t < 0.25) {
+    // Typ 1: c(a ± n)
+    const c = coeff(), n = coeff(), s = sign();
+    aufgabe = `${c}(${VAR} ${s} ${n})`;
+    const sn = s === "+" ? 1 : -1;
+    solution = `${c}${VAR} ${sn > 0 ? "+" : "-"} ${c*n}`;
   }
+  else if (t < 0.5) {
+    // Typ 2: c1·a ± c2(a ± n)
+    const c1 = coeff(), c2 = coeff(), n = coeff(), s1 = sign(), s2 = sign();
+    aufgabe = `${c1}${VAR} ${s1} ${c2}(${VAR} ${s2} ${n})`;
+    const sc1 = s1 === "+" ? 1 : -1;
+    const sc2 = s2 === "+" ? 1 : -1;
+    const totalA = c1 + sc1 * c2;                  // ✅ s2 hat hier keinen Einfluss
+    const num    = sc1 * sc2 * c2 * n;
+    solution = `${totalA}${VAR} ${num >= 0 ? "+" : "-"} ${Math.abs(num)}`;
+  }
+  else if (t < 0.75) {
+    // Typ 3: (a·VAR ± b)²
+    const a = coeff(), b = coeff(), s = sign();
+    aufgabe = `(${a}${VAR} ${s} ${b})²`;
+    const sb  = s === "+" ? 1 : -1;
+    const a2  = a * a;
+    const ab2 = 2 * a * b * sb;                    // mittlerer Term: ±2ab·VAR
+    const b2  = b * b;
+    solution = `${a2}${VAR}² ${ab2 >= 0 ? "+" : "-"} ${Math.abs(ab2)}${VAR} + ${b2}`; // ✅ immer +b²
+  }
+  else {
+    // Typ 4: (c1·a ± n1) + (c2·a ± n2)
+    const c1 = coeff(), c2 = coeff(), n1 = coeff(), n2 = coeff(), s1 = sign(), s2 = sign();
+    aufgabe = `(${c1}${VAR} ${s1} ${n1}) + (${c2}${VAR} ${s2} ${n2})`;
+    const sc1 = s1 === "+" ? 1 : -1, sc2 = s2 === "+" ? 1 : -1;
+    const totalA = c1 + c2;
+    const totalN = sc1 * n1 + sc2 * n2;
+    solution = `${totalA}${VAR} ${totalN >= 0 ? "+" : "-"} ${Math.abs(totalN)}`;
+  }
+
+  sol1 = simplify(solution);
+  return aufgabe;
+}
 
   function new1(){
     if(round1>total1){
@@ -219,4 +227,5 @@ function createTask2(){
 </script>
 </body>
 </html>
+
 
